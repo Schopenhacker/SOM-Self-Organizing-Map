@@ -304,11 +304,17 @@ Node **grid = init_grid(avg, prm);
 		BMU_cell *l_bmu=otherBMUS(bmu_rd, grid, dataset[rd].vect, prm,&nbmu); //create stack of BMUs and modify the value of nbmu(number of bmus for the selected captor) we have to give the addresse of nbmu otherwise we can't modify it
 		BMU elected_bmu = electBMU(l_bmu, nbmu);	
 		freeStack(l_bmu);
-/*---------------------------------------------------------
-     STEP 5 : update the learning parameters
-----------------------------------------------------------*/	
+/*-----------------------------------------------------------------------------
+     STEP 5 : update the learning parameters (he learning rate and BMU radius)
+------------------------------------------------------------------------------*/	
 		update_params(iter, &p, phase, prm, total_iter);
+/*----------------------------------------------------------------
+     STEP 6 : Identify Neighbors using the radius around the BMU
+----------------------------------------------------------------*/
 		int *neighs=neighbors(elected_bmu, p.rad, prm);
+/*-----------------------------------------------------------------------------------------
+     STEP 7 : Move the BMU and the BMU’s neighbors closer to the selected datanode (with the formula below)
+-----------------------------------------------------------------------------------------*/		
 		for(int i=neighs[0];i<=neighs[1];i++){
 			for(int j=neighs[2];j<=neighs[3];j++){
 				//update grid[i][j].w
@@ -316,7 +322,7 @@ Node **grid = init_grid(avg, prm);
 					{grid[i][j].w[k] += p.alpha * (dataset[rd].vect[k] - grid[i][j].w[k]);}				
 			}
 		}
-	double rapport=(double) iter/total_iter;
+//	double rapport=(double) iter/total_iter;
 //	printf("\nProgression : %f%% alpha: %lf", rapport*100 ,p.alpha);	
 	}
 print_grid(grid, prm);	
